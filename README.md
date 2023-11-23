@@ -1,16 +1,11 @@
 # flutter_univ_gpt
 
-A new Flutter project.
+Flutter 大学 ChatGPT で API 通信
 
-## Getting Started
+- 工夫したこと
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<p>
+<img src="画像1" width="30%" />
+<img src="画像2" width="30%" />
+<img src="画像3" width="30%" />
+</p>
