@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -30,15 +32,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String _apiText = '';
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    callAPI();
-  }
+  String? _apiText;
+  final apikey = '';
+  String searchText = '';
 
   @override
   Widget build(BuildContext context) {
@@ -47,14 +43,40 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              '$_apiText',
-              style: Theme.of(context).textTheme.headlineMedium,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Builder(builder: (context) {
+                final text = _apiText;
+
+                if (text == null) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                return Text(
+                  '$_apiText',
+                  style: const TextStyle(fontSize: 16),
+                );
+              }),
             ),
+            TextField(
+              decoration: InputDecoration(
+                hintText: '検索したいテキスト',
+              ),
+              onChanged: (text) {
+                searchText = text;
+              },
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  callAPI();
+                },
+                child: const Text('検索'))
           ],
         ),
       ),
@@ -62,12 +84,27 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void callAPI() async {
-    final response = await http
-        .get(Uri.parse('https://jsonplaceholder.typicode.com/albums/1'));
-    final body = response.body;
+    final response = await http.post(
+      Uri.parse('https://api.openai.com/v1/chat/completions'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $apikey',
+      },
+      body: jsonEncode(<String, dynamic>{
+        "model": "gpt-3.5-turbo",
+        "messages": [
+          {"role": "user", "content": searchText}
+        ]
+      }),
+    );
+    final body = response.bodyBytes;
+    final jsonString = utf8.decode(body);
+    final json = jsonDecode(jsonString);
+    final choices = json['choices'];
+    final content = choices[0]['message']['content'];
 
     setState(() {
-      _apiText = body;
+      _apiText = content;
     });
   }
 }
